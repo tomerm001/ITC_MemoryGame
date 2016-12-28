@@ -5,147 +5,16 @@ var currentGame;
 function cardGame (level) {
         this.levelGame = level;
         this.cards = [];
+        this.amountCards = 12;
         this.gameComplete = false;
+        this.backGroundCard = "./Images/texture.jpg";
+        this.amountSelected = 0;
         currentGame = this;
     
 }
-        
 
 
-
-cardGame.prototype.cardClicked = function(e){
-    var cardId = e.target.id;  //id of pressed div
-    var indexCards =   cardId.replace('c','') - 1 ; //equivalent id in cards array
-
-    currentGame.cards[indexCards].selected = true;
-
-    currentGame.updateSelectedDOM(); //update the DOM class to selected
-    
-    setTimeout(currentGame.gameLogic,2000); //time to allow transition
-   
-}
-
-cardGame.prototype.gameLogic = function(){
-    
-    //check if two cards are selected and if they are equal [true if two cards, true if same img]
-    var result = currentGame.checkTwoPressed()
-    console.log(result);
-    
-    var twoCards = result[0];
-    var sameImg = result[1];
-    
-    if(twoCards){
-        if(sameImg){
-            //if two image same update guessed to true and remove selected
-            currentGame.changeSelectedToGuessed();
-            //update all guessed to  pointer-events: none;
-            currentGame.updatePointerAvent();
-
-            currentGame.resetCardsNotSelected();
-            currentGame.updateSelectedDOM();
-            setTimeout(currentGame.updateGuessedDOM,500);//allow time for selected to update
-            
-            
-            
-            if(currentGame.checkIfGameCompleted()){
-                alert("you won");
-            }
-            
-        }
-        else{
-             //if two image are not the same, remove selected
-            currentGame.resetCardsNotSelected();
-            currentGame.updateSelectedDOM();
-        }
-    }
-}
-
-cardGame.prototype.checkIfGameCompleted = function(){
-
-    var allCards = currentGame.cards;
-    var cardsNotGuessed = false;
-    
-    for(var i = 0; i < allCards.length; i++){
-        if(!(allCards[i].guessed)){
-            cardsNotGuessed = true;
-        }
-    }
-    
-    if(!cardsNotGuessed){
-        currentGame.gameComplete = true;
-    }
-
-    return currentGame.gameComplete;
-
-}
-
-cardGame.prototype.updatePointerAvent = function() {
-    var allCards =  currentGame.cards;
-
-    for(var i = 0 ; i < allCards.length; i++){
-
-        var guessed = allCards[i].guessed;
-        if(guessed){
-            allCards[i].dom.style.pointerEvents = "none";
-        }
-
-    }
-
-}
-
-cardGame.prototype.changeSelectedToGuessed = function(){
-    
-    var amountCards = currentGame.cards.length;
-
-    for(var i = 0; i < amountCards; i++){
-
-        var selected = currentGame.cards[i].selected;
-
-        if(selected){
-            currentGame.cards[i].guessed = true;
-        }   
-    }
-}
-
-cardGame.prototype.resetCardsNotSelected = function(){
-
-    var amountCards = currentGame.cards.length;
-
-    for(var i = 0; i < amountCards; i++){
-
-        currentGame.cards[i].selected = false;
-    
-    }
-}
-
-cardGame.prototype.checkTwoPressed = function(){
-    
-    var amountOfCards = currentGame.cards.length;
-    var counterAmount = 0;
-    var indexSelected = [];
-    
-    for(var i = 0; i < amountOfCards; i ++){
-        var selected = currentGame.cards[i].selected;
-
-        if(selected){
-            indexSelected.push(i);
-            counterAmount++;
-        }
-    }
-
-    if(counterAmount >= 2){
-        
-        if((currentGame.cards[indexSelected[0]].alt) == (currentGame.cards[indexSelected[1]].alt)){
-            return [true,true]; //incase 2 cards pressed and are the same image
-        }
-        
-        return [true,false];//incase 2 cards pressed but are not the same
-    }
-    else {
-        return [false, false]; //if only one card is pressed
-    }
-}
-
+//generate html for game based on amount of cards
 cardGame.prototype.generateCards = function(amountOfCards){
 
     //calcualte amount of rows and coll
@@ -167,14 +36,42 @@ cardGame.prototype.generateCards = function(amountOfCards){
 
         //create imgs
         for(var i = 0; i < amountOfColl; i++){
-            var newImg = document.createElement('img');
-            newImg.className = 'card';
-            newImg.id = 'c' + cardNumber;
-            newImg.style.width = ((100/cardsPerRow)-4) + "vw";
-            newImg.style.height = ((100/cardsPerRow)-4) + "vw";
-            newImg.addEventListener('click', this.cardClicked);
 
-            newRow.appendChild(newImg);
+            //create 3D card container
+            var container3D = document.createElement("div");
+            container3D.className = 'container3D';
+            container3D.id = 'c' + cardNumber;
+            container3D.addEventListener('click', this.cardClicked);
+            container3D.style.width = (((100-20)/cardsPerRow)-4) + "vw";
+            container3D.style.height = (((100-20)/cardsPerRow)-4) + "vw";
+
+
+            //create image wrapper
+            var cardWrapper = document.createElement("div");
+            cardWrapper.id = 'w' + cardNumber;
+            cardWrapper.className = 'cardWrapper';
+
+            //add front image
+            var newImg = document.createElement('img');
+            newImg.className = 'cardFront';
+            newImg.id = 'f' + cardNumber;
+            // newImg.addEventListener('click', this.cardClicked);
+
+
+            //add background image
+            var newBackImg = document.createElement('img');
+            newBackImg.className = 'cardBack';
+            newBackImg.src = this.backGroundCard;
+            newBackImg.id = 'b' + cardNumber;
+
+
+            //append all ellements
+            cardWrapper.appendChild(newImg);
+            cardWrapper.appendChild(newBackImg);
+            container3D.appendChild(cardWrapper);
+
+            newRow.appendChild(container3D);
+
 
             cardNumber++; //counter for card id
         }
@@ -184,29 +81,13 @@ cardGame.prototype.generateCards = function(amountOfCards){
 
 } 
 
-cardGame.prototype.shuffleArray = function(array, times){
-    
-    for(var i = 0; i <times; i++){
-        var count = array.length,
-            randomnumber,
-            temp;
-
-        while( count ){
-            randomnumber = Math.random() * count-- | 0;
-            temp = array[count];
-            array[count] = array[randomnumber];
-            array[randomnumber] = temp
-        }
-    }
-    return array;
-}
-
+//generate the images for front
 cardGame.prototype.assignImages = function (){
     
-    var allCards = document.querySelectorAll(".card");
+    var allCards = document.querySelectorAll(".cardFront");
     console.log(allCards);
 
-    var amountOfCards = allCards.length;
+    var amountOfCards = this.amountCards;
     var amountOfUniqueImages = Math.floor(amountOfCards/2);
 
 
@@ -239,16 +120,41 @@ cardGame.prototype.assignImages = function (){
 
 }
 
+//shuffle array ised by assignImages
+cardGame.prototype.shuffleArray = function(array, times){
+    
+    for(var i = 0; i <times; i++){
+        var count = array.length,
+            randomnumber,
+            temp;
+
+        while( count ){
+            randomnumber = Math.random() * count-- | 0;
+            temp = array[count];
+            array[count] = array[randomnumber];
+            array[randomnumber] = temp
+        }
+    }
+    return array;
+}
+
+//generate cards object for this game from DOM
 cardGame.prototype.generateCardArray = function(game){
 
-    var allCardsDOM = document.querySelectorAll(".card");
+    var allBackDOM = document.querySelectorAll(".cardBack");
+    var allFrontDOM = document.querySelectorAll(".cardFront");
+    var allWrapDOM = document.querySelectorAll(".cardWrapper");
+    var allConDOM = document.querySelectorAll(".container3D");
 
-    for(var i = 0; i < allCardsDOM.length; i ++){
+    for(var i = 0; i < allConDOM.length; i ++){
 
         var card = {
-            dom: allCardsDOM[i],
-            id: allCardsDOM[i].getAttribute("id"),
-            alt: allCardsDOM[i].getAttribute("alt"),
+            domCon: allConDOM[i],
+            domWrap: allWrapDOM[i],
+            domFront: allFrontDOM[i],
+            domBack: allBackDOM[i],
+            id: allConDOM[i].id.replace('c',''),
+            alt: allFrontDOM[i].getAttribute('alt'),
             selected : false,
             guessed: false,
         }
@@ -257,6 +163,27 @@ cardGame.prototype.generateCardArray = function(game){
     }
 }
 
+//eventlistner for clicked
+cardGame.prototype.cardClicked = function(e){
+    var cardId = e.currentTarget.id;  //id of pressed div
+    var indexCards = cardId.replace('c','') - 1 ; //equivalent id in cards array
+
+    if(currentGame.amountSelected < 2){
+        currentGame.amountSelected++; //add one more as selected
+
+        currentGame.cards[indexCards].selected = true;
+        currentGame.updateSelectedDOM(); //update the DOM class to selected
+        
+        setTimeout(currentGame.gameLogic,2000); //time to allow transition
+    }
+    
+
+
+    
+   
+}
+
+//update classed for selected elements
 cardGame.prototype.updateSelectedDOM = function(){
 
     var allCards =  currentGame.cards;
@@ -265,20 +192,160 @@ cardGame.prototype.updateSelectedDOM = function(){
 
         var selected = allCards[i].selected;
         
-        var classes = allCards[i].dom.className;  
+        var classes = allCards[i].domWrap.className;  
 
         //check if allready selected class
         var includes = classes.includes("selected");
 
         if(selected && (!includes)){
-            allCards[i].dom.className = classes + " selected";
+            allCards[i].domWrap.className = classes + " selected";
         }
         if (!selected && includes){
-            allCards[i].dom.className = classes.replace(" selected","");
+            allCards[i].domWrap.className = classes.replace(" selected","");
         }
     }
 }
 
+
+
+
+cardGame.prototype.gameLogic = function(){
+    
+    //check if two cards are selected and if they are equal [true if two cards, true if same img]
+    var result = currentGame.checkTwoPressed()
+    console.log(result);
+    
+    var twoCards = result[0];
+    var sameImg = result[1];
+    
+    if(twoCards){
+        if(sameImg){
+            //if two image same update guessed to true and remove selected
+            currentGame.changeSelectedToGuessed();
+            //update all guessed to  pointer-events: none;
+            currentGame.updatePointerAvent();
+
+            //change all cards to selected = false
+            currentGame.resetCardsNotSelected();
+            
+            //update the DOM with selected all false
+            
+            setTimeout(currentGame.updateSelectedDOM,1500);
+            
+            //update the already guessed items in DOM
+            setTimeout(currentGame.updateGuessedDOM,2500);//allow time for selected to update
+            
+            
+            if(currentGame.checkIfGameCompleted()){
+                alert("you won");
+            }
+            
+        }
+        else{
+             //if two image are not the same, remove selected
+            currentGame.resetCardsNotSelected();
+            setTimeout(currentGame.updateSelectedDOM,1500);
+        }
+
+        currentGame.amountSelected = 0; //allow buttons to be clickable again
+    }
+}
+
+//check if two cards are pressed
+cardGame.prototype.checkTwoPressed = function(){
+    
+    var amountOfCards = currentGame.cards.length;
+    var counterAmount = 0;
+    var indexSelected = [];
+    
+    for(var i = 0; i < amountOfCards; i ++){
+        var selected = currentGame.cards[i].selected;
+
+        if(selected){
+            indexSelected.push(i);
+            counterAmount++;
+        }
+    }
+
+    if(counterAmount >= 2){
+        
+        if((currentGame.cards[indexSelected[0]].alt) == (currentGame.cards[indexSelected[1]].alt)){
+            return [true,true]; //incase 2 cards pressed and are the same image
+        }
+        
+        return [true,false];//incase 2 cards pressed but are not the same
+    }
+    else {
+        return [false, false]; //if only one card is pressed
+    }
+}
+
+
+cardGame.prototype.checkIfGameCompleted = function(){
+
+    var allCards = currentGame.cards;
+    var cardsNotGuessed = false;
+    
+    for(var i = 0; i < allCards.length; i++){
+        if(!(allCards[i].guessed)){
+            cardsNotGuessed = true;
+        }
+    }
+    
+    if(!cardsNotGuessed){
+        currentGame.gameComplete = true;
+    }
+
+    return currentGame.gameComplete;
+
+}
+
+//set all guessed elements to non active (can not be pressed)
+cardGame.prototype.updatePointerAvent = function() {
+    var allCards =  currentGame.cards;
+
+    for(var i = 0 ; i < allCards.length; i++){
+
+        var guessed = allCards[i].guessed;
+        if(guessed){
+            allCards[i].domCon.style.pointerEvents = "none";
+        }
+
+    }
+
+}
+
+//every card that has selected = true --> guessed = true
+cardGame.prototype.changeSelectedToGuessed = function(){
+    
+    var amountCards = currentGame.cards.length;
+
+    for(var i = 0; i < amountCards; i++){
+
+        var selected = currentGame.cards[i].selected;
+
+        if(selected){
+            currentGame.cards[i].guessed = true;
+        }   
+    }
+}
+
+//resents all the cards to not selected in card object
+cardGame.prototype.resetCardsNotSelected = function(){
+
+    var amountCards = currentGame.cards.length;
+
+    for(var i = 0; i < amountCards; i++){
+
+        currentGame.cards[i].selected = false;
+    
+    }
+}
+
+
+
+
+//update the dom with all guessed classed
 cardGame.prototype.updateGuessedDOM = function(){
 
     var allCards =  currentGame.cards;
@@ -287,25 +354,23 @@ cardGame.prototype.updateGuessedDOM = function(){
 
         var guessed = allCards[i].guessed;
         
-        var classes = allCards[i].dom.className;  
+        var classes = allCards[i].domWrap.className;  
 
         //check if allready selected class
         var includes = classes.includes("guessed");
 
         if(guessed && (!includes)){
-            allCards[i].dom.className = classes + " guessed";
+            allCards[i].domWrap.className = classes + " guessed";
         }
         if (!guessed && includes){
-            allCards[i].dom.className = classes.replace(" guessed","");
+            allCards[i].domWrap.className = classes.replace(" guessed","");
         }
     }
-
-
 
 }
 
 cardGame.prototype.init = function(){
-    this.generateCards(12);  //generate actual html with spaces
+    this.generateCards(this.amountCards);  //generate actual html with spaces
     this.assignImages(); // assign image srcs and details for each img div
     
     var game = this; //needed to refer to this specific game
