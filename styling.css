@@ -1,3 +1,36 @@
 body {
     background-color: blue;
+    line-height: 0;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+
+#container-game {
+    display: inline-block;
+    width: 90%;
+    padding: 0;
+    margin: 0;
+}
+
+#container-game .row {
+    padding: 0;
+    margin: 0;
+}
+
+#container-game .card  {
+    display: inline-block;
+    object-fit: cover;
+    margin: 0.25%;
+    transition: all 0.5s;
+}
+
+#container-game .card.selected {
+    transform: scale(1.2,1.2);
+    transition: all 0.5s;
+}
+
+#container-game .card.guessed {
+    transform: scale(0.8,0.8);
+    transition: all 0.5s;
 }
