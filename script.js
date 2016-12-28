@@ -19,7 +19,9 @@ cardGame.prototype.cardClicked = function(e){
 
     currentGame.cards[indexCards].selected = true;
 
-    currentGame.gameLogic();
+    currentGame.updateSelectedDOM(); //update the DOM class to selected
+    
+    setTimeout(currentGame.gameLogic,2000); //time to allow transition
    
 }
 
@@ -40,14 +42,41 @@ cardGame.prototype.gameLogic = function(){
             currentGame.updatePointerAvent();
 
             currentGame.resetCardsNotSelected();
-            alert("won");
+            currentGame.updateSelectedDOM();
+            setTimeout(currentGame.updateGuessedDOM,500);//allow time for selected to update
+            
+            
+            
+            if(currentGame.checkIfGameCompleted()){
+                alert("you won");
+            }
+            
         }
         else{
              //if two image are not the same, remove selected
             currentGame.resetCardsNotSelected();
-            alert("notWon");
+            currentGame.updateSelectedDOM();
         }
     }
+}
+
+cardGame.prototype.checkIfGameCompleted = function(){
+
+    var allCards = currentGame.cards;
+    var cardsNotGuessed = false;
+    
+    for(var i = 0; i < allCards.length; i++){
+        if(!(allCards[i].guessed)){
+            cardsNotGuessed = true;
+        }
+    }
+    
+    if(!cardsNotGuessed){
+        currentGame.gameComplete = true;
+    }
+
+    return currentGame.gameComplete;
+
 }
 
 cardGame.prototype.updatePointerAvent = function() {
@@ -228,6 +257,52 @@ cardGame.prototype.generateCardArray = function(game){
     }
 }
 
+cardGame.prototype.updateSelectedDOM = function(){
+
+    var allCards =  currentGame.cards;
+
+    for(var i = 0 ; i < allCards.length; i++){
+
+        var selected = allCards[i].selected;
+        
+        var classes = allCards[i].dom.className;  
+
+        //check if allready selected class
+        var includes = classes.includes("selected");
+
+        if(selected && (!includes)){
+            allCards[i].dom.className = classes + " selected";
+        }
+        if (!selected && includes){
+            allCards[i].dom.className = classes.replace(" selected","");
+        }
+    }
+}
+
+cardGame.prototype.updateGuessedDOM = function(){
+
+    var allCards =  currentGame.cards;
+
+    for(var i = 0 ; i < allCards.length; i++){
+
+        var guessed = allCards[i].guessed;
+        
+        var classes = allCards[i].dom.className;  
+
+        //check if allready selected class
+        var includes = classes.includes("guessed");
+
+        if(guessed && (!includes)){
+            allCards[i].dom.className = classes + " guessed";
+        }
+        if (!guessed && includes){
+            allCards[i].dom.className = classes.replace(" guessed","");
+        }
+    }
+
+
+
+}
 
 cardGame.prototype.init = function(){
     this.generateCards(12);  //generate actual html with spaces

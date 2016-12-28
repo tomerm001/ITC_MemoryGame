@@ -28,6 +28,7 @@ body {
 #container-game .card.selected {
     transform: scale(1.2,1.2);
     transition: all 0.5s;
+    border: 2px solid black;
 }
 
 #container-game .card.guessed {
