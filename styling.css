@@ -15,6 +15,8 @@ body {
     width: 80%;
     padding: 0;
     margin: 40px 0;
+    opacity: 0;
+    transition: 1s 1s;
 }
 
 #container-game .row {
@@ -80,9 +82,10 @@ body {
 
 
 #question-box {
+  font-size: 1em ;
   display: inline-block;
   width: 50vw;
-  height: 35vw;
+  height: auto;
   position: fixed;
   top: 25%;
   left: 25%;
@@ -91,18 +94,23 @@ body {
   border-radius: 10px;
   box-shadow: 6px 7px 16px -1px rgba(0,0,0,0.7);
   padding: 15px;
-  visibility: hidden;
+  visibility: visible;
+  transition: 0.5s;
+  text-align: center;
+  padding: 10px;
 }
 
 #question-box #buttons-container {
   display: block;
+  text-align: center;
+  padding: 0;
   
 
 }
 
 #question-box p{
   font-size: 23px;
-  margin-top: 50px;
+  margin-top: 30px;
   margin-bottom: 30px;
 
 
@@ -110,24 +118,30 @@ body {
 
 #question-box input {
 
-  width: 350px;
-  height: 25px;
+  width: 85%;
+  height: 27px;
   border-radius: 4px;
   font-size: 24px;
+  text-align: center;
 
 }
 
 #question-box #buttons-container {
 
   margin-top: 20px;
+  width: 88%;
+  text-align: center;
+  margin: auto;
+  padding: 0;
 
 }
 
 
 #question-box #buttons-container button {
 
-    height: 140px;
-    width: 140px;
+    height: 100px;
+    display: inline-block;
+    width: 32%;
     padding: 5px;
     font-size: 20px;
     border-radius: 8px;
@@ -138,11 +152,95 @@ body {
     -webkit-box-shadow: inset 0 0 10px #000000;
     box-shadow:         inset 0 0 10px #000000;
     border: none;
-    transition: 0.5s;
+    transition: background 0.5s;
 }
 
 #question-box #buttons-container button:hover {
 
     background-color: lightblue;
-    transition: 0.5s;
+    transition: background 0.5s;
 }
+
+#question-box #submit  {
+
+    height: 50px;
+    width: 88%;
+    padding: 5px;
+    font-size: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: none;
+    color: white;
+    margin-top: 20px;
+    -moz-box-shadow:    inset 0 0 10px #000000;
+    -webkit-box-shadow: inset 0 0 10px #000000;
+    box-shadow:         inset 0 0 10px #000000;
+    border: none;
+    transition: background 0.5s;
+    background-color: green;
+}
+
+#question-box #submit:hover  {
+    background-color: lightgreen;
+    transition: background 0.5s;
+
+}
+
+/* ----------- WON BOX -------------- */
+
+
+#won-box {
+  font-size: 1em ;
+  display: inline-block;
+  width: 50vw;
+  height: auto;
+  position: fixed;
+  top: 25%;
+  left: 25%;
+  background-color: lightblue;
+  z-index: 3;
+  border-radius: 10px;
+  box-shadow: 6px 7px 16px -1px rgba(0,0,0,0.7);
+  padding: 15px;
+  visibility: hidden;
+  transition: 0.5s;
+  text-align: center;
+  padding: 10px;
+}
+
+
+#won-box p{
+  font-size: 23px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+
+
+}
+
+
+
+#won-box #submit  {
+
+    height: 50px;
+    width: 88%;
+    padding: 5px;
+    font-size: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: none;
+    color: white;
+    margin-top: 20px;
+    -moz-box-shadow:    inset 0 0 10px #000000;
+    -webkit-box-shadow: inset 0 0 10px #000000;
+    box-shadow:         inset 0 0 10px #000000;
+    border: none;
+    transition: background 0.5s;
+    background-color: green;
+}
+
+#won-box #submit:hover  {
+    background-color: lightgreen;
+    transition: background 0.5s;
+
+}
+

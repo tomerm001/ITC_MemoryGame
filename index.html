@@ -16,23 +16,48 @@
 </head>
 <body>
 
-        <div id="container-game">
 
-          <div id="question-box">
-
-            <p>Please enter a subject:</p>
-            <input type="text">
-            <div id="buttons-container">
-              <button value="8">Easy</button>
-              <button value="12">Medium</button>
-              <button value="24">Hard</button>
-            </div>
-          </div>
-
-              
+    <!-- --------------SECTION FOR INOUT WINDOW ----------------- -->
+    <div id="question-box">
+        
+        <p>Please enter a subject:</p>
+        
+        <input id="keywordInput" type="text">
+        
+        <div id="buttons-container">
+          <button value="8" onclick="currentGame.updateAmountOfCards(8);">Easy</button>
+          <button value="12" onclick="currentGame.updateAmountOfCards(12);">Medium</button>
+          <button value="24" onclick="currentGame.updateAmountOfCards(24);">Hard</button>
         </div>
+        
+        <button id="submit" onclick="currentGame.initiateGame();">Start Game</button>
+    </div>
+
+
+    <!-- --------------YOU WON WINDOW ----------------- -->
+    <div id="won-box">
+        
+        <p>YOU WON</p>
+      
+        
+        <button id="submit" onclick="currentGame.hideWin();">Play Again</button>
+    </div>
+
+
+
+
+
+    <!-- --------------SECTION FOR GAME----------------- -->
+
+    <div id="container-game">
+        <!--Content will be generated here-->
+
+
+    </div>
     
 </body>
 
-  <script src="script.js"></script>
+<script src="script.js"></script>
+<script>var game1 = new cardGame(2);</script>
+
 </html>

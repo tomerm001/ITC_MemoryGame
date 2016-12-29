@@ -1,33 +1,69 @@
-// alert("hello");
-var currentGame;
+var currentGame; //holds current game reference
 
 
 function cardGame (level) {
-        this.levelGame = level;
         this.cards = [];
         this.amountCards = 12;
         this.gameComplete = false;
         this.backGroundCard = "./Images/texture.jpg";
         this.amountSelected = 0;
-        this.imageSource = "web";
+        this.imageSource = "local";
         this.webImages = [];
         this.keyword = "surf";
         currentGame = this;
-    
 }
 
 
 //update amount of cards
 cardGame.prototype.updateAmountOfCards = function(e){
 
-    currentGame.amountCards = e.currentTarget.value;
+    currentGame.amountCards = e;
     
 }
 
 //update game subject
-cardGame.prototype.updateSubject = function(e){
+cardGame.prototype.initiateGame = function(){
+    
+    var keywordInput = document.querySelector("#keywordInput").value;
+    currentGame.keyword = keywordInput;
 
+    if(keywordInput != ""){
+        currentGame.imageSource = "web";
+    }
 
+    currentGame.init();
+    
+    currentGame.hideWindow(); //hide window and show cards
+}
+
+//hide userInputbox
+cardGame.prototype.hideWindow = function(){
+    
+    //hide window
+    document.querySelector("#question-box").style.visibility = "hidden";
+
+    //show cards
+    document.querySelector("#container-game").style.opacity = "1"; 
+        
+}
+
+//hide winbox
+cardGame.prototype.hideWin = function(){
+    
+    //hide window
+    document.querySelector("#won-box").style.visibility = "hidden";
+
+    //show cards
+    document.querySelector("#container-game").style.opacity = "1"; 
+        
+    currentGame.init();
+}
+
+//show winner window
+cardGame.prototype.showWin = function(){
+
+    //show window
+    document.querySelector("#won-box").style.visibility = "visible";
 }
 
 //generate html for game based on amount of cards
@@ -260,7 +296,7 @@ cardGame.prototype.gameLogic = function(){
             
             
             if(currentGame.checkIfGameCompleted()){
-                alert("you won");
+                setTimeout(currentGame.showWin,2000);
             }
             
         }
@@ -419,14 +455,23 @@ cardGame.prototype.generateRandomImages = function(){
 
 }
 
-            
+//clean board
+cardGame.prototype.cleanBoard = function(){
 
+    document.querySelector("#container-game").innerHTML = "";
+    currentGame.webImages = [];
+    currentGame.gameComplete = false;
+    currentGame.amountSelected = 0;
 
+}
+
+//Init function for the memory game
 cardGame.prototype.init = function(){
+    
+    this.cleanBoard(); //clean board
+    
     this.generateCards(this.amountCards);  //generate actual html with spaces
     
-    this.keyword = prompt("Enter picture subject");
-
     if(this.imageSource == "web"){
         this.generateRandomImages(); //generate images from web
     }
@@ -441,5 +486,5 @@ cardGame.prototype.init = function(){
 }
 
 ////////////////////////////////////////////
-var game1 = new cardGame(2);
-game1.init();
+
+
