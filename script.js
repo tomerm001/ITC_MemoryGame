@@ -9,10 +9,26 @@ function cardGame (level) {
         this.gameComplete = false;
         this.backGroundCard = "./Images/texture.jpg";
         this.amountSelected = 0;
+        this.imageSource = "web";
+        this.webImages = [];
+        this.keyword = "surf";
         currentGame = this;
     
 }
 
+
+//update amount of cards
+cardGame.prototype.updateAmountOfCards = function(e){
+
+    currentGame.amountCards = e.currentTarget.value;
+    
+}
+
+//update game subject
+cardGame.prototype.updateSubject = function(e){
+
+
+}
 
 //generate html for game based on amount of cards
 cardGame.prototype.generateCards = function(amountOfCards){
@@ -100,7 +116,16 @@ cardGame.prototype.assignImages = function (){
 
         var imageObject ={ src: '', value: ''};
 
-        imageObject.src = './Images/'+ (i+1) + '.jpg';
+
+        if(this.imageSource == "web"){
+           imageObject.src = this.webImages[i];
+           
+        }
+        else {
+            imageObject.src = './Images/'+ (i+1) + '.jpg';
+        }
+        
+        
         imageObject.value = "img" + (i+1);
 
         arrayAllImages[counterForArray] = imageObject;
@@ -206,9 +231,7 @@ cardGame.prototype.updateSelectedDOM = function(){
     }
 }
 
-
-
-
+//logic of the game
 cardGame.prototype.gameLogic = function(){
     
     //check if two cards are selected and if they are equal [true if two cards, true if same img]
@@ -280,7 +303,7 @@ cardGame.prototype.checkTwoPressed = function(){
     }
 }
 
-
+//check if all cards are guessed
 cardGame.prototype.checkIfGameCompleted = function(){
 
     var allCards = currentGame.cards;
@@ -342,9 +365,6 @@ cardGame.prototype.resetCardsNotSelected = function(){
     }
 }
 
-
-
-
 //update the dom with all guessed classed
 cardGame.prototype.updateGuessedDOM = function(){
 
@@ -369,14 +389,55 @@ cardGame.prototype.updateGuessedDOM = function(){
 
 }
 
+//generate random images
+cardGame.prototype.generateRandomImage = function(i){
+
+
+        $.getJSON("http://api.flickr.com/services/feeds/photos_public.gne?jsoncallback=?",
+        {
+            tags: currentGame.keyword,
+            tagmode: "any",
+            format: "json"
+        },
+        function(data) {
+
+            console.log(data);
+            
+            var rnd = Math.floor(Math.random() * data.items.length);
+            // var rnd = i+1;
+
+            var image_src = data.items[rnd]['media']['m'].replace("_m", "_b");
+
+            currentGame.webImages.push(image_src); //add to iamge src
+
+        });
+}
+
+
+
+
 cardGame.prototype.init = function(){
     this.generateCards(this.amountCards);  //generate actual html with spaces
-    this.assignImages(); // assign image srcs and details for each img div
     
-    var game = this; //needed to refer to this specific game
-    this.generateCardArray(game);  //update game object with cards
+    this.keyword = prompt("Enter picture subject");
 
-    console.log(this.cards);
+    var amountImages = Math.ceil(this.amountCards/2);
+
+    for(var i = 0; i < amountImages; i++){
+      this.generateRandomImage(i);
+    }
+
+    
+
+
+
+    setTimeout(function(){
+        currentGame.assignImages(); // assign image srcs and details for each img div
+        
+        var game = currentGame; //needed to refer to this specific game
+        currentGame.generateCardArray(game);  //update game object with cards
+
+    console.log(this.cards);},2000);
 
 }
 
