@@ -390,7 +390,9 @@ cardGame.prototype.updateGuessedDOM = function(){
 }
 
 //generate random images
-cardGame.prototype.generateRandomImage = function(i){
+cardGame.prototype.generateRandomImages = function(){
+
+        var numberOfImages = Math.ceil(currentGame.amountCards / 2);
 
 
         $.getJSON("http://api.flickr.com/services/feeds/photos_public.gne?jsoncallback=?",
@@ -401,19 +403,23 @@ cardGame.prototype.generateRandomImage = function(i){
         },
         function(data) {
 
-            console.log(data);
-            
-            var rnd = Math.floor(Math.random() * data.items.length);
-            // var rnd = i+1;
+            console.log("data arr is ", data);
+            var srcAmount  = data.items.length;
 
-            var image_src = data.items[rnd]['media']['m'].replace("_m", "_b");
-
-            currentGame.webImages.push(image_src); //add to iamge src
+            while(currentGame.webImages.length <= numberOfImages){
+                
+                var index = currentGame.webImages.length;
+          
+                var image_src = data.items[index]['media']['m'].replace("_m", "_b");    
+                    
+                currentGame.webImages.push(image_src); //add to iamge src
+            }
 
         });
+
 }
 
-
+            
 
 
 cardGame.prototype.init = function(){
@@ -421,23 +427,16 @@ cardGame.prototype.init = function(){
     
     this.keyword = prompt("Enter picture subject");
 
-    var amountImages = Math.ceil(this.amountCards/2);
-
-    for(var i = 0; i < amountImages; i++){
-      this.generateRandomImage(i);
+    if(this.imageSource == "web"){
+        this.generateRandomImages(); //generate images from web
     }
-
     
-
-
-
     setTimeout(function(){
         currentGame.assignImages(); // assign image srcs and details for each img div
         
-        var game = currentGame; //needed to refer to this specific game
-        currentGame.generateCardArray(game);  //update game object with cards
+        currentGame.generateCardArray(currentGame);  //update game object with cards
 
-    console.log(this.cards);},2000);
+    console.log(this.cards);}, 2000);  //set time out to allow images to be generated
 
 }
 
